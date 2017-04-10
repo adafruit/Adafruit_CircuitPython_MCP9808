@@ -17,13 +17,13 @@ Usage Notes
 ===========
 
 Getting the temperature in celsius is easy! First, import all of the pins from
-the board, nativeio for native I2C communication and the thermometer library
+the board, busio for native I2C communication and the thermometer library
 itself.
 
 .. code-block:: python
 
   from board import *
-  import nativeio
+  import busio
   import adafruit_mcp9808
 
 Next, initializd the I2C bus in a with statement so it always gets shut down ok.
@@ -32,7 +32,7 @@ Then, construct the thermometer class:
 .. code-block:: python
 
   # Do one reading
-  with nativeio.I2C(SCL, SDA) as i2c:
+  with busio.I2C(SCL, SDA) as i2c:
     t = adafruit_mcp9808.MCP9808(i2c)
 
 Finally, read the temperature property.
