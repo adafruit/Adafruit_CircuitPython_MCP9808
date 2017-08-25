@@ -9,14 +9,13 @@ Dependencies
 =============
 
 This driver depends on the `Bus Device <https://github.com/adafruit/Adafruit_CircuitPython_BusDevice>`_
-library. Please ensure its also available on the CircuitPython filesystem.
-This is easily achieved by downloading
+library. Please ensure it is also available on the CircuitPython filesystem. This is easily achieved by downloading
 `a library and driver bundle <https://github.com/adafruit/Adafruit_CircuitPython_Bundle>`_.
 
 Usage Notes
 ===========
 
-Getting the temperature in celsius is easy! First, import all of the pins from
+Getting the temperature in Celsius is easy! First, import all of the pins from
 the board, busio for native I2C communication and the thermometer library
 itself.
 
@@ -26,7 +25,7 @@ itself.
   import busio
   import adafruit_mcp9808
 
-Next, initializd the I2C bus in a with statement so it always gets shut down ok.
+Next, initialize the I2C bus in a with statement so it always gets shut down ok.
 Then, construct the thermometer class:
 
 .. code-block:: python
