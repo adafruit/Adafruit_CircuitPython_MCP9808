@@ -38,7 +38,7 @@ Finally, read the temperature property.
 
 .. code-block:: python
 
-  # and print it out
+      # and print it out
       print(t.temperature)
 
 
