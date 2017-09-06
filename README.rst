@@ -34,13 +34,8 @@ Then, construct the thermometer class:
   with busio.I2C(SCL, SDA) as i2c:
       t = adafruit_mcp9808.MCP9808(i2c)
 
-Finally, read the temperature property.
-
-.. code-block:: python
-
-      # and print it out
+      # Finally, read the temperature property and print it out
       print(t.temperature)
-
 
 API Reference
 =============
