@@ -71,7 +71,7 @@ class MCP9808:
         self.buf[0] = 0x06
         with self.i2c_device as i2c:
             i2c.write(self.buf, end=1, stop=False)
-            i2c.read_into(self.buf, start=1)
+            i2c.readinto(self.buf, start=1)
 
         ok = self.buf[2] == 0x54 and self.buf[1] == 0
 
@@ -79,7 +79,7 @@ class MCP9808:
         self.buf[0] = 0x07
         with self.i2c_device as i2c:
             i2c.write(self.buf, end=1, stop=False)
-            i2c.read_into(self.buf, start=1)
+            i2c.readinto(self.buf, start=1)
 
         if not ok or self.buf[1] != 0x04:
             raise ValueError("Unable to find MCP9808 at i2c address " + str(hex(device_address)))
@@ -90,7 +90,7 @@ class MCP9808:
         self.buf[0] = 0x05
         with self.i2c_device as i2c:
             i2c.write(self.buf, end=1, stop=False)
-            i2c.read_into(self.buf, start=1)
+            i2c.readinto(self.buf, start=1)
 
         # Clear flags from the value
         self.buf[1] = self.buf[1] & 0x1f
