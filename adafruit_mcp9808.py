@@ -32,11 +32,13 @@ Implementation Notes
 
 **Hardware:**
 
-* Adafruit `MCP9808 High Accuracy I2C Temperature Sensor Breakout <https://www.adafruit.com/products/1782>`_ (Product ID: 1782)
+* Adafruit `MCP9808 High Accuracy I2C Temperature Sensor Breakout
+  <https://www.adafruit.com/products/1782>`_ (Product ID: 1782)
 
 **Software and Dependencies:**
 
-* Adafruit CircuitPython firmware (0.8.0+) for the ESP8622 and M0-based boards: https://github.com/adafruit/circuitpython/releases
+* Adafruit CircuitPython firmware (0.8.0+) for the ESP8622 and M0-based boards:
+  https://github.com/adafruit/circuitpython/releases
 * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 **Notes:**
@@ -44,6 +46,9 @@ Implementation Notes
 #.  Datasheet: http://www.adafruit.com/datasheets/MCP9808.pdf
 
 """
+
+__version__ = "0.0.0-auto.0"
+__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP9808.git"
 
 from adafruit_bus_device.i2c_device import I2CDevice
 
@@ -62,8 +67,8 @@ class MCP9808:
     # temperature
     # temperature_resolution
 
-    def __init__(self, i2c, device_address=0b0011000):
-        self.i2c_device = I2CDevice(i2c, device_address)
+    def __init__(self, i2c_bus, device_address=0b0011000):
+        self.i2c_device = I2CDevice(i2c_bus, device_address)
 
         # Verify the manufacturer and device ids to ensure we are talking to
         # what we expect.
@@ -97,9 +102,4 @@ class MCP9808:
         if self.buf[1] & 0x10 == 0x10:
             self.buf[1] = self.buf[1] & 0x0f
             return (self.buf[1] * 16 + self.buf[2] / 16.0) - 256
-        else:
-            return self.buf[1] * 16 + self.buf[2] / 16.0
-
-    @temperature.setter
-    def temperature(self, value):
-        raise AttributeError()
+        return self.buf[1] * 16 + self.buf[2] / 16.0
