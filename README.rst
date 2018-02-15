@@ -2,6 +2,15 @@
 Introduction
 ============
 
+
+.. image:: https://readthedocs.org/projects/adafruit-circuitpython-mcp9808/badge/?version=latest
+    :target: https://circuitpython.readthedocs.io/projects/mcp9808/en/latest/
+    :alt: Documentation Status
+
+.. image :: https://img.shields.io/discord/327254708534116352.svg
+    :target: https://discord.gg/nBQh6qu
+    :alt: Discord
+
 The MCP9808 is an awesome, high accuracy temperature sensor that communicates
 over I2C. Its available on `Adafruit as a breakout <https://www.adafruit.com/products/1782>`_.
 
