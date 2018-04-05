@@ -67,8 +67,8 @@ class MCP9808:
     # temperature
     # temperature_resolution
 
-    def __init__(self, i2c_bus, device_address=0b0011000):
-        self.i2c_device = I2CDevice(i2c_bus, device_address)
+    def __init__(self, i2c_bus, address=0x18):
+        self.i2c_device = I2CDevice(i2c_bus, address)
 
         # Verify the manufacturer and device ids to ensure we are talking to
         # what we expect.
@@ -87,7 +87,7 @@ class MCP9808:
             i2c.readinto(self.buf, start=1)
 
         if not ok or self.buf[1] != 0x04:
-            raise ValueError("Unable to find MCP9808 at i2c address " + str(hex(device_address)))
+            raise ValueError("Unable to find MCP9808 at i2c address " + str(hex(address)))
 
     @property
     def temperature(self):
