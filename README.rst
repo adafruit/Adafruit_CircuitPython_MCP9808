@@ -11,8 +11,8 @@ Introduction
     :target: https://discord.gg/nBQh6qu
     :alt: Discord
 
-.. image:: https://travis-ci.com/adafruit/Adafruit_CircuitPython_MCP9808.svg?branch=master
-    :target: https://travis-ci.com/adafruit/Adafruit_CircuitPython_MCP9808
+.. image:: https://github.com/adafruit/Adafruit_CircuitPython_MCP9808/workflows/Build%20CI/badge.svg
+    :target: https://github.com/adafruit/Adafruit_CircuitPython_MCP9808/actions/
     :alt: Build Status
 
 The MCP9808 is an awesome, high accuracy temperature sensor that communicates
