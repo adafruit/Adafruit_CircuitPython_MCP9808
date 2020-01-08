@@ -10,7 +10,7 @@ mcp = adafruit_mcp9808.MCP9808(i2c_bus)
 
 # To initialise using a specified address:
 # Necessary when, for example, connecting A0 to VDD to make address=0x19
-# mcp = adafruit_mcp9808.MCP9808(i2c_bus, 0x19)
+# mcp = adafruit_mcp9808.MCP9808(i2c_bus, address=0x19)
 
 
 
