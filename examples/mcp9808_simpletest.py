@@ -13,9 +13,8 @@ mcp = adafruit_mcp9808.MCP9808(i2c_bus)
 # mcp = adafruit_mcp9808.MCP9808(i2c_bus, address=0x19)
 
 
-
 while True:
     tempC = mcp.temperature
     tempF = tempC * 9 / 5 + 32
-    print('Temperature: {} C {} F '.format(tempC, tempF))
+    print("Temperature: {} C {} F ".format(tempC, tempF))
     time.sleep(2)
