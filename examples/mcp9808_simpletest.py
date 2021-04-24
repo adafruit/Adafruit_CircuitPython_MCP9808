@@ -3,13 +3,12 @@
 
 import time
 import board
-import busio
 import adafruit_mcp9808
 
-i2c_bus = busio.I2C(board.SCL, board.SDA)
+i2c = board.I2C()  # uses board.SCL and board.SDA
 
 # To initialise using the default address:
-mcp = adafruit_mcp9808.MCP9808(i2c_bus)
+mcp = adafruit_mcp9808.MCP9808(i2c)
 
 # To initialise using a specified address:
 # Necessary when, for example, connecting A0 to VDD to make address=0x19

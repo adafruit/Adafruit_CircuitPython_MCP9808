@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 """
-`adafruit_mcp9808` - MCP9808 I2C Temperature Sensor
+`adafruit_mcp9808`
 ====================================================
 
 CircuitPython library to support MCP9808 high accuracy temperature sensor.
@@ -20,7 +20,7 @@ Implementation Notes
 
 **Software and Dependencies:**
 
-* Adafruit CircuitPython firmware (0.8.0+) for the ESP8622 and M0-based boards:
+* Adafruit CircuitPython firmware for the supported boards:
   https://github.com/adafruit/circuitpython/releases
 * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
@@ -43,7 +43,36 @@ SIXTEENTH_C = 0x3
 
 
 class MCP9808:
-    """Interface to the MCP9808 temperature sensor."""
+    """Interface to the MCP9808 temperature sensor.
+
+    :param ~busio.I2C i2c_bus: The I2C bus the MCP9808 is connected to.
+    :param int address: The I2C address of the device. Defaults to :const:`0x18`
+
+    **Quickstart: Importing and using the MCP9808**
+
+        Here is an example of using the :class:`MCP9808` class.
+        First you will need to import the libraries to use the sensor
+
+        .. code-block:: python
+
+            import board
+            import adafruit_mcp9808
+
+        Once this is done you can define your `board.I2C` object and define your sensor object
+
+        .. code-block:: python
+
+            i2c = board.I2C()   # uses board.SCL and board.SDA
+            mcp = adafruit_mcp9808.MCP9808(i2c_bus)
+
+        Now you have access to the change in temperature using the
+        :attr:`temperature` attribute. This temperature is in Celsius.
+
+        .. code-block:: python
+
+            temperature = mcp.temperature
+
+    """
 
     # alert_lower_temperature_bound
     # alert_upper_temperature_bound
@@ -75,7 +104,7 @@ class MCP9808:
 
     @property
     def temperature(self):
-        """Temperature in celsius. Read-only."""
+        """Temperature in Celsius. Read-only."""
         self.buf[0] = 0x05
         with self.i2c_device as i2c:
             i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
