@@ -23,6 +23,8 @@ Table of Contents
 .. toctree::
     :caption: Tutorials
 
+    Adafruit MCP9808 High Accuracy I2C Temperature Sensor Learning Guide <https://learn.adafruit.com/adafruit-mcp9808-precision-i2c-temperature-sensor-guide>
+
 .. toctree::
     :caption: Related Products
 
