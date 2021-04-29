@@ -15,7 +15,7 @@ Implementation Notes
 
 **Hardware:**
 
-* Adafruit `MCP9808 High Accuracy I2C Temperature Sensor Breakout
+* `Adafruit MCP9808 High Accuracy I2C Temperature Sensor Breakout
   <https://www.adafruit.com/products/1782>`_ (Product ID: 1782)
 
 **Software and Dependencies:**
@@ -109,9 +109,75 @@ class MCP9808:
         with self.i2c_device as i2c:
             i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
 
+        return self._temp_conv()
+
+    def _temp_conv(self):
         # Clear flags from the value
         self.buf[1] = self.buf[1] & 0x1F
         if self.buf[1] & 0x10 == 0x10:
             self.buf[1] = self.buf[1] & 0x0F
             return (self.buf[1] * 16 + self.buf[2] / 16.0) - 256
         return self.buf[1] * 16 + self.buf[2] / 16.0
+
+    def _limit_temperatures(self, temp, t_address=0x02):
+        """Internal function to setup limit temperature
+
+        :param int temp: temperature limit
+        :param int t_address: register address for the temperature limit
+                                0x02 : Upper Limit
+                                0x03 : Lower Limit
+                                0x04 : Critical Limit
+        """
+
+        if temp < 0:
+            negative = True
+            temp = abs(temp)
+        else:
+            negative = False
+
+        self.buf[0] = t_address
+
+        self.buf[1] = temp >> 4
+        if negative:
+            self.buf[1] = self.buf[1] | 0x10
+
+        self.buf[2] = (temp & 0x0F) << 4
+
+        with self.i2c_device as i2c:
+            i2c.write(self.buf)
+
+    @property
+    def upper_temperature(self):
+        self.buf[0] = 0x02
+        with self.i2c_device as i2c:
+            i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
+
+        return self._temp_conv()
+
+    @upper_temperature.setter
+    def upper_temperature(self, temp):
+        self._limit_temperatures(temp, 0x02)
+
+    @property
+    def lower_temperature(self):
+        self.buf[0] = 0x03
+        with self.i2c_device as i2c:
+            i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
+
+        return self._temp_conv()
+
+    @lower_temperature.setter
+    def lower_temperature(self, temp):
+        self._limit_temperatures(temp, 0x03)
+
+    @property
+    def critical_temperature(self):
+        self.buf[0] = 0x04
+        with self.i2c_device as i2c:
+            i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
+
+        return self._temp_conv()
+
+    @critical_temperature.setter
+    def critical_temperature(self, temp):
+        self._limit_temperatures(temp, 0x04)
