@@ -148,6 +148,7 @@ class MCP9808:
 
     @property
     def upper_temperature(self):
+        """Upper temperature property"""
         self.buf[0] = 0x02
         with self.i2c_device as i2c:
             i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
@@ -156,10 +157,12 @@ class MCP9808:
 
     @upper_temperature.setter
     def upper_temperature(self, temp):
+        """Setup Upper temperature"""
         self._limit_temperatures(temp, 0x02)
 
     @property
     def lower_temperature(self):
+        """Lower temperature property"""
         self.buf[0] = 0x03
         with self.i2c_device as i2c:
             i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
@@ -168,10 +171,12 @@ class MCP9808:
 
     @lower_temperature.setter
     def lower_temperature(self, temp):
+        """Setup Lower temperature"""
         self._limit_temperatures(temp, 0x03)
 
     @property
     def critical_temperature(self):
+        """Critical temperature property"""
         self.buf[0] = 0x04
         with self.i2c_device as i2c:
             i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
@@ -180,4 +185,5 @@ class MCP9808:
 
     @critical_temperature.setter
     def critical_temperature(self, temp):
+        """Setup Critical temperature"""
         self._limit_temperatures(temp, 0x04)
