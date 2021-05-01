@@ -8,7 +8,7 @@
 
 CircuitPython library to support MCP9808 high accuracy temperature sensor.
 
-* Author(s): Scott Shawcroft
+* Author(s): Scott Shawcroft, Jose David M.
 
 Implementation Notes
 --------------------
@@ -21,8 +21,10 @@ Implementation Notes
 **Software and Dependencies:**
 
 * Adafruit CircuitPython firmware for the supported boards:
-  https://github.com/adafruit/circuitpython/releases
-* Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
+  https://circuitpython.org/downloads
+
+* Adafruit's Bus Device library:
+  https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 **Notes:**
 
@@ -33,13 +35,33 @@ Implementation Notes
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP9808.git"
 
+from micropython import const
 from adafruit_bus_device.i2c_device import I2CDevice
 
+_MCP9808_DEFAULT_ADDRESS = const(0x18)
+_MCP9808_DEVICE_ID = const(0x54)
+_MCP9808_REG_CONFIGURATION = const(0x01)
+_MCP9808_REG_UPPER_TEMP = const(0x02)
+_MCP9808_REG_LOWER_TEMP = const(0x03)
+_MCP9808_REG_CRITICAL_TEMP = const(0x04)
+_MCP9808_REG__TEMP = const(0x05)
+_MCP9808_REG_MANUFACTURER_ID = const(0x06)
+_MCP9808_REG_DEVICE_ID = const(0x07)
+_MCP9808_REG_RESOLUTION = const(0x08)
+
 # Resolution settings
-HALF_C = 0x0
-QUARTER_C = 0x1
-EIGHTH_C = 0x2
-SIXTEENTH_C = 0x3
+
+_MCP9808_RESOLUTION_HALF_C = const(0x0)
+_MCP9808_RESOLUTION_QUARTER_C = const(0x1)
+_MCP9808_RESOLUTION_EIGHTH_C = const(0x2)
+_MCP9808_RESOLUTION_SIXTEENTH_C = const(0x3)
+
+_MCP9808_RESOLUTIONS = (
+    _MCP9808_RESOLUTION_HALF_C,
+    _MCP9808_RESOLUTION_QUARTER_C,
+    _MCP9808_RESOLUTION_EIGHTH_C,
+    _MCP9808_RESOLUTION_SIXTEENTH_C,
+)
 
 
 class MCP9808:
@@ -47,6 +69,17 @@ class MCP9808:
 
     :param ~busio.I2C i2c_bus: The I2C bus the MCP9808 is connected to.
     :param int address: The I2C address of the device. Defaults to :const:`0x18`
+
+    **MCP9808 Settings**
+        You could set the MCP9808 with different temperature limits and compare them with the
+        ambient temperature :abbr:`Ta (Temperature ambient)`.
+
+        - :attr:`above_ct`: this variable will be set to `True` when Ta is above this limit
+        - :attr:`above_ut`: this variable will be set to `True` when Ta is above this limit
+        - :attr:`below_lt`: this value will be set to `True` when Ta is below this limit
+
+        To get this value, you will need to read the temperature, and then access the attribute
+
 
     **Quickstart: Importing and using the MCP9808**
 
@@ -74,26 +107,23 @@ class MCP9808:
 
     """
 
-    # alert_lower_temperature_bound
-    # alert_upper_temperature_bound
-    # critical_temperature
-    # temperature
-    # temperature_resolution
-
-    def __init__(self, i2c_bus, address=0x18):
+    def __init__(self, i2c_bus, address=_MCP9808_DEFAULT_ADDRESS):
         self.i2c_device = I2CDevice(i2c_bus, address)
 
         # Verify the manufacturer and device ids to ensure we are talking to
         # what we expect.
+        self.above_ct = False
+        self.above_ut = False
+        self.below_lt = False
         self.buf = bytearray(3)
-        self.buf[0] = 0x06
+        self.buf[0] = _MCP9808_REG_MANUFACTURER_ID
         with self.i2c_device as i2c:
             i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
 
-        ok = self.buf[2] == 0x54 and self.buf[1] == 0
+        ok = self.buf[2] == _MCP9808_DEVICE_ID and self.buf[1] == 0
 
         # Check device id.
-        self.buf[0] = 0x07
+        self.buf[0] = _MCP9808_REG_DEVICE_ID
         with self.i2c_device as i2c:
             i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
 
@@ -105,13 +135,27 @@ class MCP9808:
     @property
     def temperature(self):
         """Temperature in Celsius. Read-only."""
-        self.buf[0] = 0x05
+        self.buf[0] = _MCP9808_REG__TEMP
         with self.i2c_device as i2c:
             i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
+
+        if self.buf[1] & 0x80 == 0x80:
+            self.above_ct = True
+            self.above_ut = False
+            self.below_lt = False
+        if self.buf[1] & 0x40 == 0x40:
+            self.above_ct = False
+            self.above_ut = True
+            self.below_lt = False
+        if self.buf[1] & 0x20 == 0x20:
+            self.above_ct = False
+            self.above_ut = False
+            self.below_lt = True
 
         return self._temp_conv()
 
     def _temp_conv(self):
+        """Internal function to convert temperature given by the sensor"""
         # Clear flags from the value
         self.buf[1] = self.buf[1] & 0x1F
         if self.buf[1] & 0x10 == 0x10:
@@ -146,44 +190,69 @@ class MCP9808:
         with self.i2c_device as i2c:
             i2c.write(self.buf)
 
-    @property
-    def upper_temperature(self):
-        """Upper temperature property"""
-        self.buf[0] = 0x02
+    def _get_temperature(self, address):
+        self.buf[0] = address
         with self.i2c_device as i2c:
             i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
 
         return self._temp_conv()
+
+    def _set_temperature(self, temp, address):
+        self._limit_temperatures(temp, address)
+
+    @property
+    def upper_temperature(self):
+        """Upper alarm temperature in Celsius"""
+
+        return self._get_temperature(_MCP9808_REG_UPPER_TEMP)
 
     @upper_temperature.setter
     def upper_temperature(self, temp):
         """Setup Upper temperature"""
-        self._limit_temperatures(temp, 0x02)
+
+        self._limit_temperatures(temp, _MCP9808_REG_UPPER_TEMP)
 
     @property
     def lower_temperature(self):
-        """Lower temperature property"""
-        self.buf[0] = 0x03
-        with self.i2c_device as i2c:
-            i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
+        """Lower alarm temperature in Celsius"""
 
-        return self._temp_conv()
+        return self._get_temperature(_MCP9808_REG_LOWER_TEMP)
 
     @lower_temperature.setter
     def lower_temperature(self, temp):
         """Setup Lower temperature"""
-        self._limit_temperatures(temp, 0x03)
+
+        self._limit_temperatures(temp, _MCP9808_REG_LOWER_TEMP)
 
     @property
     def critical_temperature(self):
-        """Critical temperature property"""
-        self.buf[0] = 0x04
-        with self.i2c_device as i2c:
-            i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
+        """Critical alarm temperature in Celsius"""
 
-        return self._temp_conv()
+        return self._get_temperature(_MCP9808_REG_CRITICAL_TEMP)
 
     @critical_temperature.setter
     def critical_temperature(self, temp):
         """Setup Critical temperature"""
-        self._limit_temperatures(temp, 0x04)
+
+        self._limit_temperatures(temp, _MCP9808_REG_CRITICAL_TEMP)
+
+    @property
+    def resolution(self):
+        """Temperature Resolution in Celsius"""
+        self.buf[0] = _MCP9808_REG_RESOLUTION
+        with self.i2c_device as i2c:
+            i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
+
+        return _MCP9808_RESOLUTIONS[int(self.buf[1])]
+
+    @resolution.setter
+    def resolution(self, resol_value=_MCP9808_RESOLUTION_SIXTEENTH_C):
+        """Setup Critical temperature"""
+
+        if resol_value not in _MCP9808_RESOLUTIONS:
+            raise ValueError("Resolution is not supported" % resol_value)
+
+        self.buf[0] = _MCP9808_REG_RESOLUTION
+        self.buf[1] = resol_value
+        with self.i2c_device as i2c:
+            i2c.write(self.buf, end=1)
