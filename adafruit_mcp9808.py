@@ -109,8 +109,16 @@ class MCP9808:
 
     _MCP9808_REG_RESOLUTION_SET = RWBits(2, 0x08, 0, register_width=2)
     above_ct = ROBit(_MCP9808_REG__TEMP, 7, register_width=1)
+    """True when the temperature is higher than the currently
+    set critical temperature. False Otherwise"""
+
     above_ut = ROBit(_MCP9808_REG__TEMP, 6, register_width=1)
+    """True when the temperature is higher than the currently
+    set high temperature. False Otherwise"""
+
     below_lt = ROBit(_MCP9808_REG__TEMP, 5, register_width=1)
+    """True when the temperature is lower than the currently
+    set lower temperature. False Otherwise"""
 
     def __init__(self, i2c_bus, address=_MCP9808_DEFAULT_ADDRESS):
         self.i2c_device = I2CDevice(i2c_bus, address)
