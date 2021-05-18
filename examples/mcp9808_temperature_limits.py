@@ -23,6 +23,10 @@ print(mcp.temperature)
 time.sleep(0.3)  # This is the time temperature conversion at maximum resolution
 
 # Showing temperature Limits
-print("Lower Temperature Limit:", mcp.below_lt)
-print("Upper Temperature Limit:", mcp.above_ut)
-print("Critical Temperature Limit:", mcp.above_ct)
+while True:
+    if mcp.below_lt:
+        print("too cold!")
+    if mcp.above_ut:
+        print("getting hot!")
+    if mcp.above_ct:
+        print("Above critical temp!")
