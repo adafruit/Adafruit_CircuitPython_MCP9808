@@ -116,7 +116,7 @@ class MCP9808:
     """True when the temperature is above the currently
     set high temperature. False Otherwise"""
 
-    below_lt = ROBit(_MCP9808_REG__TEMP, 5, register_width=1)
+    below_lower = ROBit(_MCP9808_REG__TEMP, 5, register_width=1)
     """True when the temperature is below the currently
     set lower temperature. False Otherwise"""
 
