@@ -117,7 +117,7 @@ class MCP9808:
     set high temperature. False Otherwise"""
 
     below_lt = ROBit(_MCP9808_REG__TEMP, 5, register_width=1)
-    """True when the temperature is below than the currently
+    """True when the temperature is below the currently
     set lower temperature. False Otherwise"""
 
     def __init__(self, i2c_bus, address=_MCP9808_DEFAULT_ADDRESS):
