@@ -112,7 +112,7 @@ class MCP9808:
     """True when the temperature is above than the currently
     set critical temperature. False Otherwise"""
 
-    above_ut = ROBit(_MCP9808_REG__TEMP, 6, register_width=1)
+    above_upper = ROBit(_MCP9808_REG__TEMP, 6, register_width=1)
     """True when the temperature is above than the currently
     set high temperature. False Otherwise"""
 
