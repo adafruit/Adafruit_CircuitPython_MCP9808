@@ -61,15 +61,15 @@ Getting the temperature in Celsius is easy! First, import all of the pins from
 the board, board.I2C() for native I2C communication and the thermometer library
 itself.
 
-.. code-block:: python
+.. code-block:: python3
 
-  from board import *
+  import board
   import adafruit_mcp9808
 
 Next, initialize the I2C bus in a with statement so it always gets shut down ok.
 Then, construct the thermometer class:
 
-.. code-block:: python
+.. code-block:: python3
 
   # Do one reading
   with i2c = board.I2C() as i2c:
