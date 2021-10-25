@@ -78,6 +78,11 @@ Then, construct the thermometer class:
       # Finally, read the temperature property and print it out
       print(t.temperature)
 
+Documentation
+=============
+
+API documentation for this library can be found on `Read the Docs <https://circuitpython.readthedocs.io/projects/mcp9808/en/latest/>`_.
+
 Contributing
 ============
 
