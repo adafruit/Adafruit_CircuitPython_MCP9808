@@ -72,7 +72,7 @@ Then, construct the thermometer class:
 .. code-block:: python3
 
   # Do one reading
-  with i2c = board.I2C() as i2c:
+  with board.I2C() as i2c:
       t = adafruit_mcp9808.MCP9808(i2c)
 
       # Finally, read the temperature property and print it out
