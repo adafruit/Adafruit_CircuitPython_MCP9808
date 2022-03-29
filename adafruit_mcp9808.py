@@ -252,6 +252,6 @@ class MCP9808:
 
     @resolution.setter
     def resolution(self, resol_value=3):
-        """ Setup Critical temperature"""
+        """Setup Critical temperature"""
 
         self._MCP9808_REG_RESOLUTION_SET = resol_value  # pylint: disable=invalid-name
