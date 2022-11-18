@@ -6,6 +6,7 @@ import board
 import adafruit_mcp9808
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
+# i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
 
 # To initialise using the default address:
 mcp = adafruit_mcp9808.MCP9808(i2c)
