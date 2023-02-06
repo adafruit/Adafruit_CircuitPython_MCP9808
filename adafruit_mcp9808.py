@@ -41,6 +41,13 @@ from adafruit_bus_device.i2c_device import I2CDevice
 from adafruit_register.i2c_bits import RWBits
 from adafruit_register.i2c_bit import ROBit
 
+try:
+    import typing  # pylint: disable=unused-import
+    from typing_extensions import Literal
+    from busio import I2C
+except ImportError:
+    pass
+
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP9808.git"
 
@@ -74,9 +81,9 @@ class MCP9808:
         You could set the MCP9808 with different temperature limits and compare them with the
         ambient temperature Ta
 
-        - above_ct this value will be set to `True` when Ta is above this limit
-        - above_ut: this value will be set to `True` when Ta is above this limit
-        - below_lt: this value will be set to `True` when Ta is below this limit
+        - above_critical: this value will be set to `True` when Ta is above this limit
+        - above_upper: this value will be set to `True` when Ta is above this limit
+        - below_lower: this value will be set to `True` when Ta is below this limit
 
         To get this value, you will need to read the temperature, and then access the attribute
 
@@ -120,7 +127,7 @@ class MCP9808:
     """True when the temperature is below the currently
     set lower temperature. False Otherwise"""
 
-    def __init__(self, i2c_bus, address=_MCP9808_DEFAULT_ADDRESS):
+    def __init__(self, i2c_bus: I2C, address: int = _MCP9808_DEFAULT_ADDRESS) -> None:
         self.i2c_device = I2CDevice(i2c_bus, address)
 
         # Verify the manufacturer and device ids to ensure we are talking to
@@ -143,7 +150,7 @@ class MCP9808:
             )
 
     @property
-    def temperature(self):
+    def temperature(self) -> float:
         """Temperature in Celsius. Read-only."""
         self.buf[0] = _MCP9808_REG__TEMP
         with self.i2c_device as i2c:
@@ -151,7 +158,7 @@ class MCP9808:
 
         return self._temp_conv()
 
-    def _temp_conv(self):
+    def _temp_conv(self) -> float:
         """Internal function to convert temperature given by the sensor"""
         # Clear flags from the value
         self.buf[1] = self.buf[1] & 0x1F
@@ -160,7 +167,9 @@ class MCP9808:
             return (self.buf[1] * 16 + self.buf[2] / 16.0) - 256
         return self.buf[1] * 16 + self.buf[2] / 16.0
 
-    def _limit_temperatures(self, temp, t_address=0x02):
+    def _limit_temperatures(
+        self, temp: int, t_address: Literal[0x02, 0x03, 0x04] = 0x02
+    ) -> None:
         """Internal function to setup limit temperature
 
         :param int temp: temperature limit
@@ -187,54 +196,54 @@ class MCP9808:
         with self.i2c_device as i2c:
             i2c.write(self.buf)
 
-    def _get_temperature(self, address):
+    def _get_temperature(self, address: Literal[0x02, 0x03, 0x04]) -> float:
         self.buf[0] = address
         with self.i2c_device as i2c:
             i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
 
         return self._temp_conv()
 
-    def _set_temperature(self, temp, address):
+    def _set_temperature(self, temp: int, address: Literal[0x02, 0x03, 0x04]) -> None:
         self._limit_temperatures(temp, address)
 
     @property
-    def upper_temperature(self):
+    def upper_temperature(self) -> float:
         """Upper alarm temperature in Celsius"""
 
         return self._get_temperature(_MCP9808_REG_UPPER_TEMP)
 
     @upper_temperature.setter
-    def upper_temperature(self, temp):
+    def upper_temperature(self, temp: int) -> None:
         """Setup Upper temperature"""
 
         self._limit_temperatures(temp, _MCP9808_REG_UPPER_TEMP)
 
     @property
-    def lower_temperature(self):
+    def lower_temperature(self) -> float:
         """Lower alarm temperature in Celsius"""
 
         return self._get_temperature(_MCP9808_REG_LOWER_TEMP)
 
     @lower_temperature.setter
-    def lower_temperature(self, temp):
+    def lower_temperature(self, temp: int) -> None:
         """Setup Lower temperature"""
 
         self._limit_temperatures(temp, _MCP9808_REG_LOWER_TEMP)
 
     @property
-    def critical_temperature(self):
+    def critical_temperature(self) -> float:
         """Critical alarm temperature in Celsius"""
 
         return self._get_temperature(_MCP9808_REG_CRITICAL_TEMP)
 
     @critical_temperature.setter
-    def critical_temperature(self, temp):
+    def critical_temperature(self, temp: int) -> None:
         """Setup Critical temperature"""
 
         self._limit_temperatures(temp, _MCP9808_REG_CRITICAL_TEMP)
 
     @property
-    def resolution(self):
+    def resolution(self) -> Literal[0, 1, 2, 3]:
         """Temperature Resolution in Celsius
 
         =======   ============   ==============
@@ -251,7 +260,7 @@ class MCP9808:
         return self._MCP9808_REG_RESOLUTION_SET
 
     @resolution.setter
-    def resolution(self, resol_value=3):
+    def resolution(self, resol_value: Literal[0, 1, 2, 3] = 3) -> None:
         """Setup Critical temperature"""
 
         self._MCP9808_REG_RESOLUTION_SET = resol_value  # pylint: disable=invalid-name
