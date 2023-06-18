@@ -25,9 +25,9 @@ time.sleep(0.3)  # This is the time temperature conversion at maximum resolution
 
 # Showing temperature Limits
 while True:
-    if mcp.below_lt:
+    if mcp.below_lower:
         print("too cold!")
-    if mcp.above_ut:
+    if mcp.above_upper:
         print("getting hot!")
-    if mcp.above_ct:
+    if mcp.above_critical:
         print("Above critical temp!")
