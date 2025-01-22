@@ -26,3 +26,12 @@ Using discovery topic to create entity in Home Assistant.
 .. literalinclude:: ../examples/mcp9808_average_temp_mqtt.py
     :caption: examples/mcp9808_average_temp_mqtt.py
     :linenos:
+
+DisplayIO Simpletest
+---------------------
+
+This is a simple test for boards with built-in display.
+
+.. literalinclude:: ../examples/mcp9808_displayio_simpletest.py
+    :caption: examples/mcp9808_displayio_simpletest.py
+    :linenos:
