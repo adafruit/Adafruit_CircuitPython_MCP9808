@@ -5,14 +5,15 @@ python script to read mcp9808 temperature and publish it in mqtt.
 Using discovery topic to create entity in Home Assistant.
 """
 
-import time
 import json
+import time
 from array import array
-import board
-import paho.mqtt.client as mqtt
-import numpy as np
-import adafruit_mcp9808
 
+import board
+import numpy as np
+import paho.mqtt.client as mqtt
+
+import adafruit_mcp9808
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
 # i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
@@ -64,9 +65,9 @@ while True:
     print(len(temp1m))
     for count in range(0, 9):
         temp1m[count] = mcp.temperature
-        print("Temperature: {} C ".format(mcp.temperature))
+        print(f"Temperature: {mcp.temperature} C ")
         avgtemp = round(np.average(temp1m), 1)
-        print("avgtemp {} C".format(avgtemp))
+        print(f"avgtemp {avgtemp} C")
         time.sleep(10)
     send_msg = {"temperature": avgtemp}
     client.publish(

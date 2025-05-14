@@ -2,7 +2,9 @@
 # SPDX-License-Identifier: MIT
 
 import time
+
 import board
+
 import adafruit_mcp9808
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
@@ -18,5 +20,5 @@ mcp = adafruit_mcp9808.MCP9808(i2c)
 while True:
     tempC = mcp.temperature
     tempF = tempC * 9 / 5 + 32
-    print("Temperature: {} C {} F ".format(tempC, tempF))
+    print(f"Temperature: {tempC} C {tempF} F ")
     time.sleep(2)
