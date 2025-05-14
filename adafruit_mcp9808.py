@@ -36,15 +36,16 @@ Implementation Notes
 
 """
 
-from micropython import const
 from adafruit_bus_device.i2c_device import I2CDevice
-from adafruit_register.i2c_bits import RWBits
 from adafruit_register.i2c_bit import ROBit
+from adafruit_register.i2c_bits import RWBits
+from micropython import const
 
 try:
-    import typing  # pylint: disable=unused-import
-    from typing_extensions import Literal
+    import typing
+
     from busio import I2C
+    from typing_extensions import Literal
 except ImportError:
     pass
 
@@ -145,9 +146,7 @@ class MCP9808:
             i2c.write_then_readinto(self.buf, self.buf, out_end=1, in_start=1)
 
         if not ok or self.buf[1] != 0x04:
-            raise ValueError(
-                "Unable to find MCP9808 at i2c address " + str(hex(address))
-            )
+            raise ValueError("Unable to find MCP9808 at i2c address " + str(hex(address)))
 
     @property
     def temperature(self) -> float:
@@ -167,9 +166,7 @@ class MCP9808:
             return (self.buf[1] * 16 + self.buf[2] / 16.0) - 256
         return self.buf[1] * 16 + self.buf[2] / 16.0
 
-    def _limit_temperatures(
-        self, temp: int, t_address: Literal[0x02, 0x03, 0x04] = 0x02
-    ) -> None:
+    def _limit_temperatures(self, temp: int, t_address: Literal[0x02, 0x03, 0x04] = 0x02) -> None:
         """Internal function to setup limit temperature
 
         :param int temp: temperature limit
@@ -263,4 +260,4 @@ class MCP9808:
     def resolution(self, resol_value: Literal[0, 1, 2, 3] = 3) -> None:
         """Setup Critical temperature"""
 
-        self._MCP9808_REG_RESOLUTION_SET = resol_value  # pylint: disable=invalid-name
+        self._MCP9808_REG_RESOLUTION_SET = resol_value

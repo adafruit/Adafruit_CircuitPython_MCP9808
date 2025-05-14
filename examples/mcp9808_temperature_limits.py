@@ -6,7 +6,9 @@ Show the MCP9808 to setup different temperature values
 """
 
 import time
+
 import board
+
 import adafruit_mcp9808
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
