@@ -115,7 +115,7 @@ class MCP9808:
 
     """
 
-    _MCP9808_REG_RESOLUTION_SET = RWBits(2, 0x08, 0, register_width=2)
+    _MCP9808_REG_RESOLUTION_SET = RWBits(2, 0x08, 0, register_width=1)
     above_critical = ROBit(_MCP9808_REG__TEMP, 7, register_width=1)
     """True when the temperature is above the currently
     set critical temperature. False Otherwise"""
