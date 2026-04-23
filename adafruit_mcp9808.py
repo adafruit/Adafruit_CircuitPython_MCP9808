@@ -160,9 +160,9 @@ class MCP9808:
     def _temp_conv(self) -> float:
         """Internal function to convert temperature given by the sensor"""
         # Clear flags from the value
-        self.buf[1] = self.buf[1] & 0x1F
+        self.buf[1] &= 0x1F
         if self.buf[1] & 0x10 == 0x10:
-            self.buf[1] = self.buf[1] & 0x0F
+            self.buf[1] &= 0x0F
             return (self.buf[1] * 16 + self.buf[2] / 16.0) - 256
         return self.buf[1] * 16 + self.buf[2] / 16.0
 
@@ -186,7 +186,7 @@ class MCP9808:
 
         self.buf[1] = temp >> 4
         if negative:
-            self.buf[1] = self.buf[1] | 0x10
+            self.buf[1] |= 0x10
 
         self.buf[2] = (temp & 0x0F) << 4
 
